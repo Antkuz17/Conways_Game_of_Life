@@ -78,4 +78,15 @@ impl Grid {
 
         num_live
     }
+
+    // Clear function to reset the grid and generation counter
+    pub fn clear(&mut self) {
+        for row in 0..self.get_height()
+        {
+            for col in 0..self.get_width() 
+            {
+                self.set_cell(row, col, false);
+            }
+        }
+    }
 }

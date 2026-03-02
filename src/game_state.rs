@@ -34,9 +34,6 @@ impl GameState {
 
     // Set current generation number
     pub fn set_current_generation(&mut self, generation: usize) {
-        if generation < 0 {
-            panic!("Generation number cannot be negative");
-        }
         self.CurrentGeneration = generation;
     }
     /*
@@ -59,12 +56,12 @@ impl GameState {
                 {   
                     // If the cell has 2-3 living partners it lives
                     if live_neighbors > 1 && live_neighbors < 4 {
-                        NextGrid.set_current_population(get)
+                        self.NextGrid.set_cell(row, col, true);
                         continue;
                     }
                     // Anything else and it dies
                     else{
-                        NextGrid.set_cell(row, col, false)
+                        self.NextGrid.set_cell(row, col, false)
                     }
                 }
 
@@ -72,7 +69,7 @@ impl GameState {
                 else
                 {
                     if live_neighbors == 3 {
-                        NextGrid.set_cell(row, col, true);
+                        self.NextGrid.set_cell(row, col, true);
                     }
                 }
 
@@ -81,7 +78,11 @@ impl GameState {
         }
 
         // Updating the current generation counter
-        set_current_generation(get_generation() + 1);
+        self.set_current_generation(self.get_generation() + 1);
 
+        // Swap the current and next grid
+        std::mem::swap(&mut self.CurrentGrid, &mut self.NextGrid);
+
+        self.NextGrid.clear();
     }
 }
