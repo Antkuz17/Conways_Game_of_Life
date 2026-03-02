@@ -6,15 +6,18 @@ use macroquad::prelude::*;
 
 #[macroquad::main("Game of Life")]
 async fn main() {
-    let mut state = GameState::new(50, 50);
+    let mut state = GameState::new(100, 150);
 
-    load_glider_gun(&mut state);
+    // cribbage
+    //load_rle(&mut state, "4b2o$4bo$b2obo10bo$bo2b2o9b3o$3bo2bo11bo$bob4o10b2o$obo$o2b4o12b3o$b2o3bo11bo3bo6b2o$3b2o5b3o4bo5bo4bobo$3bo5bo3bo4bo3bo5bo$bobo4bo5bo4b3o5b2o$b2o6bo3bo11bo3b2o$10b3o12b4o2bo$29bobo$13b2o10b4obo$13bo11bo2bo$14b3o9b2o2bo$16bo10bob2o$27bo$26b2o!", 20, 50);
 
     // Uncomment one of the following lines to load a different starting configuration
     // load_random(&mut state);
     // load_glider(&mut state);
+    load_glider_gun(&mut state);
 
-    
+
+
     loop {
         for row in 0..state.current_grid.get_height()
     {
@@ -22,20 +25,20 @@ async fn main() {
         {
             if state.current_grid.get_cell(row, col).unwrap_or(false) {
                 draw_rectangle(
-                    (col * 16) as f32 + 1.0,
-                    (row * 16) as f32 + 1.0,
-                    16.0,
-                    16.0,
+                    (col * 12) as f32 + 1.0,
+                    (row * 12) as f32 + 1.0,
+                    12.0,
+                    12.0,
                     WHITE       
                 );
             }
             else {
                 // Black fill
                 draw_rectangle(
-                    (col * 16) as f32 + 1.0,
-                    (row * 16) as f32 + 1.0,
-                    16.0,
-                    16.0,
+                    (col * 12) as f32 + 1.0,
+                    (row * 12) as f32 + 1.0,
+                    12.0,
+                    12.0,
                     BLACK
                 );
             }
@@ -103,4 +106,39 @@ async fn main() {
             }
         }
     }
+
+    
+    fn load_rle(state: &mut GameState, rle: &str, offset_row: usize, offset_col: usize) {
+    let mut row = offset_row;
+    let mut col = offset_col;
+    let mut count_str = String::new();
+
+    for ch in rle.chars() {
+        match ch {
+            '0'..='9' => count_str.push(ch),
+            'b' => {
+                let count = if count_str.is_empty() { 1 } else { count_str.parse::<usize>().unwrap() };
+                col += count;
+                count_str.clear();
+            }
+            'o' => {
+                let count = if count_str.is_empty() { 1 } else { count_str.parse::<usize>().unwrap() };
+                for i in 0..count {
+                    state.current_grid.set_cell(row, col + i, true);
+                }
+                col += count;
+                count_str.clear();
+            }
+            '$' => {
+                let count = if count_str.is_empty() { 1 } else { count_str.parse::<usize>().unwrap() };
+                row += count;
+                col = offset_col;
+                count_str.clear();
+            }
+            '!' => break,
+            _ => {}
+        }
+    }
+}
+
 }
