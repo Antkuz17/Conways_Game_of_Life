@@ -33,4 +33,14 @@ impl Grid {
         self.cells[index] = value;
         Some(())
     }
+    
+    // Getter for width
+    pub fn get_width(&self) -> usize {
+        self.width
+    }
+
+    // Getter for height
+    pub fn get_height(&self) -> usize {
+        self.height
+    }
 }
