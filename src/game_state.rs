@@ -1,7 +1,7 @@
 use crate::grid::Grid;
 
 pub struct GameState {
-    current_grid: Grid,
+    pub current_grid: Grid,
     next_grid: Grid,
     current_generation: usize,
     current_population: usize,
